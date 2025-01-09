@@ -4,7 +4,7 @@ from starlette.responses import RedirectResponse
 from starlette.middleware.authentication import AuthenticationMiddleware
 from shiny import App, ui
 from starlette.requests import Request
-from starlette.responses import HTMLResponse, Response
+from starlette.responses import HTMLResponse, Response, PlainTextResponse
 
 import os
 
@@ -66,10 +66,14 @@ def require_auth(route_function):
 
     return wrapper
 
+async def health_check(request):
+    return PlainTextResponse("OK", status_code=200)
+
 data_request_app = DataRequestApp()
 
 routes = [
     Route('/', require_auth(reroute_to_upload)),
+    Route('/health', health_check),
     Mount('/upload', app=data_request_app.app_upload_actual),
     Mount('/chat', app=data_request_app.app_chat_actual)
 ]
