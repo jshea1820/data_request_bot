@@ -14,6 +14,7 @@ Before building, we'll need all environment variables properly set. Start by cre
 your ``.env.configure`` file:
 
 `cat .env.configure.example > .env.configure`
+
 `nano .env.configure`
 
 You'll need to
