@@ -9,7 +9,6 @@ langchain = "*"
 openai = "*"
 langchain-community = "*"
 langchain-openai = "*"
-psycopg2 = "*"
 pandas = "*"
 langchain-text-splitters = "*"
 langgraph = "*"
@@ -18,6 +17,7 @@ unstructured = "*"
 markdown = "*"
 shiny = "*"
 starlette = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 

@@ -91,10 +91,10 @@ class Node:
                 query_success = True
                 print("Query success")
                 print(f"Query results: {query_results}")
-            except:
+            except Exception as e:
                 query_results_string = ""
                 query_success = False
-                print("Query failure")
+                print(f"Query failure: {e}")
 
             return {
                 "message": query_results_string,

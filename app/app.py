@@ -38,13 +38,14 @@ class DataRequestApp:
         print("Moving the DB docs to local...")
         db_doc_file_name = self.app_upload.db_doc_file_name
         db_doc_file_path = self.app_upload.db_doc_file_path
-        os.rename(db_doc_file_path, f"./app/app_data/database_docs/{db_doc_file_name}")
+
+        os.rename(db_doc_file_path, db_doc_file_name)
         print("DB docs moved")
 
         print("Connecting to restored database...")
-        self.db_client.connect(os.environ["POSTGRESQL_USER"], os.environ["POSTGRESQL_PASSWORD"], db_name)
+        self.db_client.connect("app_user", "app_pass", db_name)
 
-        self.graph = Graph(f"./app/app_data/database_docs/{db_doc_file_name}", self.db_client)
+        self.graph = Graph(db_doc_file_name, self.db_client)
         self.graph.build_graph()
         self.graph.compile()
 
