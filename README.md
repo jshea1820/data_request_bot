@@ -1,5 +1,6 @@
 # Data Request Bot
-Chatbot for answering data requests. Upload your database and documentation, and ask it questions about your dataset
+Chatbot for answering data requests. Upload your database and documentation, and ask it questions about your dataset. Check out the app! http://data-request-bot-lb-179747031.us-east-1.elb.amazonaws.com/
+(username and password required, email jshea1820@gmail.com for the credentials)
 
 ## Running locally
 Start by cloning the repository.
@@ -39,4 +40,3 @@ This will take a few minutes as your image is built. Once complete, run:
 `make run`
 
 This should run the web application. You can access it by opening a browser and navigating to ``http://localhost:8000/``
-
