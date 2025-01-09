@@ -29,4 +29,14 @@ Next, you'll need to do the same with you application environment variables:
 This allows you to specify an application username and password, which will be required when accessing
 the web application. It also requires an OpenAI API key, which will be needed to make the LLM calls.
 
+With the configuration variables set, you should be all set to build. Docker is used for the application
+build and is a requirement to build and run the application. To build the image, run:
+
+`make build`
+
+This will take a few minutes as your image is built. Once complete, run:
+
+`make run`
+
+This should run the web application. You can access it by opening a browser and navigating to ``http://localhost:8000/``
 
