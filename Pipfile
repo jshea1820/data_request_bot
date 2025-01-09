@@ -1,0 +1,26 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+jupyter = "*"
+langchain = "*"
+openai = "*"
+langchain-community = "*"
+langchain-openai = "*"
+psycopg2 = "*"
+pandas = "*"
+langchain-text-splitters = "*"
+langgraph = "*"
+pypdf = "*"
+unstructured = "*"
+markdown = "*"
+shiny = "*"
+starlette = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"
+python_full_version = "3.11.10"
