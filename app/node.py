@@ -8,6 +8,7 @@ class State(TypedDict):
     database_query: str
     query_results: str
     query_successful: bool
+    is_initial_message: bool
     context: List[Document]
 
 class Node:
@@ -64,14 +65,12 @@ class Node:
             retrieved_docs = self.vector_store.similarity_search(state[self.rag_search_argument])
             docs_content = "\n\n".join(doc.page_content for doc in retrieved_docs)
 
-            print(f"Retrieved context: {docs_content}")
+            print(f"Retrieved context length: {len(docs_content)}")
 
             adj_state = state.copy()
             adj_state["context"] = docs_content
 
             prompt = PROMPT_TEMPLATES[self.name].format(**adj_state)
-
-            print(f"Prompt to execute: {prompt}")
 
             response = self.llm.invoke(prompt).content
 

@@ -1,4 +1,4 @@
-include .env
+include .env.configure
 
 build:
 		docker build -t ${IMAGE_NAME} .
@@ -7,7 +7,4 @@ run:
 push:
 		docker build -t ${IMAGE_NAME} .
 		. push.sh
-
-
-
 

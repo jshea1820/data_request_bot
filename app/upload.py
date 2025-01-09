@@ -9,13 +9,32 @@ class AppUpload:
         self.app = app
 
         self.upload_app_ui = ui.page_fluid(
-            ui.h2("Welcome to the data request bot!"),
+            ui.h2("Welcome to the Data Request Bot!"),
+            ui.br(),
+            ui.p(
+                """
+                The Data Request Bot is a chatbot for answering questions about your data without having to interact with a database
+                or code in SQL at all. Using your uploaded database documentation, the chatbot can translate your natural language
+                questions into executable SQL queries on your database, and use the results to come up with an answer.
+                """
+            ),
+            ui.br(),
+            ui.p(
+                """
+                To get started, please upload your database documentation (must be a Markdown .md file).
+                If you don't have a database but would like a demo, download the sample DVD rentals database
+                documentation at 
+                """, 
+                ui.a("this", href="https://github.com/jshea1820/data_request_bot/blob/main/example_data/DVD%20Rentals%20Database.md", target="_blank"),
+                """ link. Then upload the file here."""
+            ),
             ui.input_file(
                 "db_doc_file_input", 
-                "To get started, please upload your database documentation (must be a Markdown .md file)",
+                "File upload",
                 accept=".md"
             ),
             ui.output_ui("submit_button_1_ui"),
+            ui.br(),
             ui.output_ui("db_archive_file_input_ui"),
             ui.output_ui("submit_button_2_ui"),
             ui.br()
@@ -54,10 +73,23 @@ class AppUpload:
             if current_page() == "db_doc_upload_page":
                 return None
             else:
-                return ui.input_file(
-                    "db_archive_file_input",
-                    "Now please upload your Postgres database archive (must be a .zip file)",
-                    accept=".zip"
+                return ui.div(
+                    ui.br(),
+                    ui.p(
+                        """
+                        Great! Next, we'll need your database. We do not yet support online database
+                        connections, so we'll need the database as a Postgres archive (packaged in a
+                        .zip file). If you're just here for the demo, you can download the DVD rentals
+                        database archive 
+                        """,
+                        ui.a("here", href="https://github.com/jshea1820/data_request_bot/blob/main/example_data/dvdrental.zip", target="_blank"),
+                        """, and then upload the .zip file to this page"""
+                    ),
+                    ui.input_file(
+                        "db_archive_file_input",
+                        "Upload file",
+                        accept=".zip"
+                    )
                 )
         
         # Reactive calculation to check if the archive has been uploaded
@@ -72,9 +104,18 @@ class AppUpload:
             if not uploaded_db_archive_file():
                 return None
 
-            return ui.tags.a(
-                ui.input_action_button("submit_button_2", "Start Chatting"),
-                href="/chat"
+            return ui.div(
+                ui.p(
+                    """
+                    You're ready to start chatting! Click the button to proceed to the chat.
+                    It will take a few moments as we'll need to unpack your data and prepare
+                    the chatbot. Keep in mind this is still in beta and there may be bugs.
+                    """
+                ),
+                ui.tags.a(
+                    ui.input_action_button("submit_button_2", "Start Chatting"),
+                    href="/chat"
+                )
             )
 
         # Button click for second submission. Runs the preparation

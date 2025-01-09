@@ -49,6 +49,8 @@ class DataRequestApp:
         self.graph.build_graph()
         self.graph.compile()
 
+        self.app_chat.send_initial_message.set(True)
+
 
 async def reroute_to_upload(request):
     return RedirectResponse(url='/upload')

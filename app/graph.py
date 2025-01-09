@@ -26,6 +26,17 @@ class Graph:
     def _build_nodes(self):
 
         self.graph_builder.add_node(
+            "initial_message",
+            Node(
+                name="initial_message",
+                node_type="rag",
+                llm=self.openai_llm,
+                vector_store=self.vector_store,
+                rag_search_argument="message"
+            ).callback
+        )
+
+        self.graph_builder.add_node(
             "data_query_classification",
             Node(
                 name="data_query_classification",
@@ -51,7 +62,7 @@ class Graph:
             Node(
                 name="non_data_query_processing",
                 node_type="fixed_response",
-                fixed_response="That's not a data query, I can only answer data queries"
+                fixed_response="I'm not sure if that's a data request. Right now, I'm only allowed to answer data requests"
             ).callback
         )
 
@@ -69,7 +80,10 @@ class Graph:
             Node(
                 name="data_query_execution_failure",
                 node_type="fixed_response",
-                fixed_response="Internal query failed, try again?"
+                fixed_response="""
+                I can see that's a data request, but I'm having trouble using the data to answer it.
+                Please try again, or try asking the question in a different way.
+                """
             ).callback
         )
 
@@ -88,7 +102,15 @@ class Graph:
 
         self._build_nodes()
 
-        self.graph_builder.add_edge(START, "data_query_classification")
+        self.graph_builder.add_conditional_edges(
+            START,
+            lambda state: "Initial Message" if state["is_initial_message"] else "Not Initial Message",
+            {
+                "Initial Message": "initial_message",
+                "Not Initial Message": "data_query_classification"
+            }
+        )
+
         self.graph_builder.add_conditional_edges(
             "data_query_classification",
             lambda state: "Data Query" if state["message"] == "Data Query" else "Not Data Query",
@@ -128,10 +150,17 @@ class Graph:
 
         print(f"Running invocation on message: {message}")
 
-        response = self.graph.invoke({"message": message})["message"]
+        response = self.graph.invoke({"message": message, "is_initial_message": False})["message"]
 
         print(f"Response: {response}")
 
         return response
 
-    
+    def get_initial_message(self):
+
+        response = self.graph.invoke({"message": "Database summary", "is_initial_message": True})["message"]
+        print(f"Response: {response}")
+
+        return response
+
+

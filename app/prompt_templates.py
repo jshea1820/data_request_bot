@@ -51,6 +51,18 @@ prompt_template_strings = {
 
     Using the results from the query, answer the user's question.
 
+    """,
+    "initial_message": """
+
+    You're a chatbot helping a user understand their relational database.
+    The following is documentation on their database:
+
+    "{context}"
+
+    Using this documentation, give the user a summary of what data is available. 
+    Make the response no longer than 2 paragraphs. Do not include technical database
+    terminology, assume the user is non-technical.
+
     """
     
 }
