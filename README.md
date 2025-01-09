@@ -17,6 +17,16 @@ your ``.env.configure`` file:
 
 `nano .env.configure`
 
-You'll need to
+You'll need to set the name of the Docker image that you'll create (``data_request_bot`` works fine). 
+If you intend on deploying to ECS, you'll also need to specify the name of your ECS repo.
+
+Next, you'll need to do the same with you application environment variables:
+
+`cat .env.example > .env`
+
+`nano .env`
+
+This allows you to specify an application username and password, which will be required when accessing
+the web application. It also requires an OpenAI API key, which will be needed to make the LLM calls.
 
 
