@@ -1,0 +1,246 @@
+DVD Rentals Database
+
+A database for tracking the operations of DVD rental stores, including data on customers, store locations, rentals, and staff. 
+
+- Tables  
+  - actor  
+    - Description  
+      - Actors in movies that the video store rents out. Actors can be in multiple movies, and one movie can have multiple actors  
+    - Primary Key  
+      - actor\_id  
+    - Foreign Keys  
+    - Attributes  
+      - first\_name  
+        - The first name of the associated actor  
+      - last\_name  
+        - The last name of the associated actor  
+      - last\_update  
+        - The last time the record was updated  
+  - address  
+    - Description  
+      - Addresses for customers, staff, and stores  
+    - Primary Key  
+      - address\_id  
+    - Foreign Keys  
+      - city\_id  
+        - The city in which the address is located  
+    - Attributes  
+      - address  
+        - The full address for the associated address record  
+      - address2  
+        - The secondary address if applicable  
+      - district  
+        - The district in which the address is located  
+      - postal\_code  
+        - Postal code of the associated address  
+      - phone  
+        - Phone number associated with the address  
+      - last\_update  
+        - The last time the record was updated  
+  - category  
+    - Description  
+      - Movie categories (genres). Movies can be have multiple categories, and one category can be associated with multiple movies  
+    - Primary Key  
+      - category\_id  
+    - Foreign Keys  
+    - Attributes  
+      - name  
+        - The name of the category record  
+      - last\_update  
+        - The last time the record was updated  
+  - city  
+    - Description  
+      - Pick list of cities in which addresses can be located  
+    - Primary Key  
+      - city\_id  
+    - Foreign Keys  
+      - country\_id  
+        - The country in which the associated city is located  
+    - Attributes  
+      - city  
+        - The name of the associated city record  
+      - last\_update  
+        - The last time the record was updated  
+  - countries  
+    - Description  
+      - Picklist of countries in which cities and addresses can be located  
+    - Primary Key  
+      - country\_id  
+    - Foreign Keys  
+    - Attributes  
+      - country  
+        - Name of the associated county  
+      - last\_update  
+        - The last time the record was updated  
+  - customers  
+    - Description  
+      - Records of customers who have shopped or registered at specific stores  
+    - Primary Key  
+      - customer\_id  
+    - Foreign Keys  
+      - store\_id  
+        - The store that the associated customer is associated with  
+      - address\_id  
+        - The address that the customer is associated with  
+    - Attributes  
+      - first\_name  
+        - The first name of the customer  
+      - last\_name  
+        - The last name of the customer  
+      - email  
+        - The email address of the customer  
+      - activebool  
+        - A boolean indicator of if the customer is active  
+      - create\_date  
+        - Date that the customer record was first created  
+      - last\_update  
+        - The last time the record was updated  
+  - film  
+    - Description  
+      - Movies that are available for rental in stores  
+    - Primary Key  
+      - film\_id  
+    - Foreign keys  
+      - language\_id  
+        - The language that the movie is in  
+    - Attributes  
+      - title  
+        - The title of the associated movie  
+      - description  
+        - The description of the associated movie  
+      - release\_year  
+        - The year that the associated movies first came out in theatres  
+      - rental\_duration  
+        - The duration of the movie  
+      - rental\_rate  
+        - How much the movie costs to rent  
+      - length  
+        - The length of the movie  
+      - replacement\_cost  
+        - How much it would cost to replace the movie in stores  
+      - rating  
+        - The critical rating of the movie  
+      - last\_update  
+        - The last time the record was updated   
+      - special\_features  
+        - If the movie has any special features, like bonus clips  
+  - film\_actor  
+    - Description  
+      - Mapping table between films and actors, indicates which actors appeared in which films  
+    - Primary Key  
+      - actor\_id  
+      - film\_id  
+    - Foreign Keys  
+    - Attributes  
+      - last\_update  
+        - The last time the record was updated  
+  - film\_category  
+    - Description  
+      - Mapping table between films and categories. Indicates the categories associated with each film  
+    - Primary key  
+      - film\_id  
+      - category\_id  
+    - Foreign keys  
+    - Attributes  
+      - last\_update  
+        - The last time the record was updated  
+  - inventory  
+    - Description  
+      - Indicator of which films each store has available for rent. Stores may have multiple copies of the same movie, and one copy can be rented out multiple times  
+    - Primary key  
+      - inventory\_id  
+    - Foreign Keys  
+      - film\_id  
+        - The film associated with the inventory record  
+      - store\_id  
+        - The store holding the associated inventory  
+    - Attributes  
+      - last\_update  
+        - The last time the record was updated  
+  - language  
+    - Description  
+      - Picklist of languages that movies can be in  
+    - Primary Key  
+      - language\_id  
+    - Foreign Keys  
+    - Attributes  
+      - name  
+        - The name of the associated language  
+      - last\_update  
+        - The last time the record was updated  
+  - payment  
+    - Description  
+      - Payments from customers made on their rentals  
+    - Primary key  
+      - payment\_id  
+    - Foreign Keys  
+      - customer\_id  
+        - The customer who made the associated payment  
+      - staff\_id  
+        - The staff member who made the associated sale  
+      - rental\_id  
+        - The rental record for the associated sale  
+    - Attributes  
+      - amount  
+        - The amount paid by the customer for the rental  
+      - payment\_date  
+        - The date of the payment made  
+  - rental  
+    - Description  
+      - Rentals made by customers. Rentals correspond to a specific inventory item  
+    - Primary Key  
+      - rental\_id  
+    - Foreign Keys  
+      - inventory\_id  
+        - The inventory item of the associated rental  
+      - customer\_id  
+        - The customer who made the associated rental  
+      - staff\_id  
+        - The staff member responsible for the sale of the associated rental  
+    - Attributes  
+      - rental\_date  
+        - The date the rental was made  
+      - return\_date  
+        - The date that the rental is due back  
+      - last\_update  
+        - The last time the record was updated  
+  - staff  
+    - Descripiton  
+      - The individual staff members working the stores and making sales  
+    - Primary Key  
+      - staff\_id  
+    - Foreign Keys  
+      - address\_id  
+        - The address of the associated staff member  
+      - store\_id  
+        - The store that the associated staff member works at  
+    - Attributes  
+      - first\_name  
+        - The first name of the staff member  
+      - last\_name  
+        - The last name of the staff member  
+      - email  
+        - The email address of the staff member  
+      - active  
+        - Boolean indicator of if the staff member is active  
+      - username  
+        - The username of the staff member in the system  
+      - password  
+        - The password of the staff member in the system  
+      - last\_update  
+        - The last time the record was updated  
+      - picture  
+        - The picture on record of the staff member  
+  - atore  
+    - Description  
+      - Rental stores in which staff members work and inventory is housed   
+    - Primary Key  
+      - store\_id  
+    - Foreign\_keys  
+      - manager\_staff\_id  
+        - The ID of the staff member who is the manager of the associated store  
+      - address\_id  
+        - The address of the associated store  
+    - Attributes  
+      - last\_update  
+        - The last time the record was updated

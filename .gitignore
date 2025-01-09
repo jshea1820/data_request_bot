@@ -1,0 +1,4 @@
+.env
+*.ipynb
+*.DS_store
+app/app_data/*
