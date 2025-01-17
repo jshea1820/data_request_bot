@@ -1,6 +1,5 @@
 # Data Request Bot
-Chatbot for answering data requests. Upload your database and documentation, and ask it questions about your dataset. Check out the app! http://www.datarequestbot.com
-(username and password required, email jshea1820@gmail.com for the credentials)
+Chatbot for answering data requests. Upload your database and documentation, and ask it questions about your dataset.
 
 ## Running locally
 Start by cloning the repository.
