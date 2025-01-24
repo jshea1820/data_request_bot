@@ -15,9 +15,13 @@ langgraph = "*"
 pypdf = "*"
 unstructured = "*"
 markdown = "*"
-shiny = "*"
 starlette = "*"
 psycopg2-binary = "*"
+shinylive = "*"
+shiny = {extras = ["shinylive"], version = "*"}
+boto3 = "*"
+awswrangler = "*"
+fastapi = "*"
 
 [dev-packages]
 
