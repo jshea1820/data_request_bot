@@ -2,16 +2,15 @@ from starlette.applications import Starlette
 from starlette.routing import Mount, Route
 from starlette.responses import RedirectResponse
 from starlette.middleware.authentication import AuthenticationMiddleware
-from shiny import App, ui
+from shiny import App
 from starlette.requests import Request
-from starlette.responses import HTMLResponse, Response, PlainTextResponse
+from starlette.responses import Response, PlainTextResponse
 
 import os
 
 from chat import app_chat_ui, app_chat_server
 from connect import app_connect_ui, app_connect_server
 from landing import app_landing_ui
-
 from auth import BasicAuthBackend
 
 

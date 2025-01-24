@@ -1,4 +1,4 @@
-from shiny import App, ui, reactive, module
+from shiny import ui, reactive
 from shiny import render
 
 

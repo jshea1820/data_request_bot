@@ -1,5 +1,4 @@
-from shiny import App, ui, reactive, module
-from urllib.parse import urlparse
+from shiny import ui, reactive
 import time
 
 # Create a welcome message
