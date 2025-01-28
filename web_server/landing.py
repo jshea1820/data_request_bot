@@ -1,8 +1,11 @@
-from shiny import ui
+from shiny import ui, reactive
+from utils import AWS_SESSION, save_parameters
 
+import os
 
 app_landing_ui = ui.page_fluid(
-    ui.h2("Welcome to the Data Request Bot!"),
+    ui.panel_title("Data Request Bot"),
+    ui.h4("Welcome to the Data Request Bot!"),
     ui.br(),
     ui.p(
         """
@@ -22,10 +25,27 @@ app_landing_ui = ui.page_fluid(
     ui.p("or"),
     ui.tags.a(
         ui.input_action_button("chat_button", "Start chatting now with some demo data"),
-        href="/chat?dataset_id=demo"
+        href="/db_loading?database_name=demo"
     )
 )
 
 def app_landing_server(input, output, session):
 
-    pass
+    # Button click for submission
+    @reactive.Effect
+    def go_to_demo():
+        if input.chat_button():
+
+            database_name = "demo"
+
+            session_credentials = AWS_SESSION.get_credentials()
+
+            parameters = {
+                "aws_access_key": session_credentials.access_key,
+                "aws_access_secret_key": session_credentials.secret_key,
+                "aws_session_token": session_credentials.token,
+                "aws_region": os.environ["AWS_REGION"],
+                "glue_database_name": os.environ["DEMO_AWS_GLUE_DATABASE"]
+            }
+
+            save_parameters(database_name, parameters)

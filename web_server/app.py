@@ -8,11 +8,12 @@ from starlette.responses import Response, PlainTextResponse
 
 import os
 
-from chat import app_chat_ui, app_chat_server
-from connect import app_connect_ui, app_connect_server
-from landing import app_landing_ui
 from auth import BasicAuthBackend
 
+from chat import app_chat_ui, app_chat_server
+from connect import app_connect_ui, app_connect_server
+from landing import app_landing_ui, app_landing_server
+from db_loading import app_db_loading_ui, app_db_loading_server
 
 async def reroute_to_landing(request):
     return RedirectResponse(url='/landing')
@@ -34,9 +35,10 @@ async def health_check(request):
 routes = [
     Route('/', require_auth(reroute_to_landing)),
     Route('/health', health_check),
-    Mount('/landing', app=App(app_landing_ui, None)),
+    Mount('/landing', app=App(app_landing_ui, app_landing_server)),
     Mount('/connect', app=App(app_connect_ui, app_connect_server)),
     Mount('/chat', app=App(app_chat_ui, app_chat_server)),
+    Mount('/db_loading', app=App(app_db_loading_ui, app_db_loading_server)),
 ]
 
 app = Starlette(routes=routes)

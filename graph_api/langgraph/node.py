@@ -1,6 +1,6 @@
 from typing_extensions import List, TypedDict
 from langchain_core.documents import Document
-from prompt_templates import PROMPT_TEMPLATES
+from graph_api.langgraph.prompt_templates import PROMPT_TEMPLATES
 
 class State(TypedDict):
     original_question: str
@@ -71,6 +71,8 @@ class Node:
             adj_state["context"] = docs_content
 
             prompt = PROMPT_TEMPLATES[self.name].format(**adj_state)
+
+            print(prompt)
 
             response = self.llm.invoke(prompt).content
 

@@ -1,8 +1,7 @@
 from langgraph.graph import START, END, StateGraph
 from langchain_openai import ChatOpenAI
-from db_client import DBClient
-from node import State, Node
-from doc_vector_store_generator import DocumentVectorStoreGenerator
+from graph_api.langgraph.node import State, Node
+from graph_api.langgraph.doc_vector_store_generator import DocumentVectorStoreGenerator
 
 class Graph:
 
@@ -80,10 +79,8 @@ class Graph:
             Node(
                 name="data_query_execution_failure",
                 node_type="fixed_response",
-                fixed_response="""
-                I can see that's a data request, but I'm having trouble using the data to answer it.
-                Please try again, or try asking the question in a different way.
-                """
+                fixed_response="""I can see that's a data request, but I'm having trouble using the data to answer it.
+                Please try again, or try asking the question in a different way."""
             ).callback
         )
 

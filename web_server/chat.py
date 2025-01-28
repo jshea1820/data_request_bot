@@ -1,5 +1,10 @@
 from shiny import ui, reactive
-import time
+import os
+import requests
+
+from utils import extract_query_params
+from graph_api_client import GraphAPIClient
+
 
 # Create a welcome message
 welcome_1 = ui.markdown(
@@ -30,26 +35,38 @@ app_chat_ui = ui.page_fillable(
 
 
 def app_chat_server(input, output, session):
+
     chat = ui.Chat(id="chat", messages=[welcome_1, welcome_2])
+
+    database_name = reactive.Value("")
+    ready_to_send_initial_message = reactive.Value(False)
+    initial_message_sent = reactive.Value(False)
+
+    client = GraphAPIClient()
 
     @reactive.Effect
     def on_load():
 
-        query_string = session.input[".clientdata_url_search"]()[1:]
-        dataset_name = query_string.split("=")[1]
-        print("Loading chat page...")
-        print(dataset_name)
-        # Here is where you load in the details for the graph
-        print("Ok now I'm ready")
+        # Set the database name
+        query_params = extract_query_params(session)
+        database_name.set(query_params["database_name"])
+        ready_to_send_initial_message.set(True)
 
+    @reactive.Effect
+    async def check_send_initial_message():
+        if ready_to_send_initial_message.get() and not initial_message_sent.get():
+
+            initial_message_sent.set(True)
+            graph_response = client.get_initial_message(database_name.get())
+
+            await chat.append_message_stream(graph_response)
 
     @chat.on_user_submit
     async def _():
+
         message = chat.user_input()
 
-        response = message # Replace this with API call
-
-        await chat.append_message(response)
-                
-
+        graph_response = client.get_graph_response(database_name.get(), message)
+        
+        await chat.append_message(graph_response)
 

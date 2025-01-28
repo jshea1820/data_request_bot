@@ -1,123 +1,97 @@
 from shiny import ui, reactive
 from shiny import render
 
+from utils import save_parameters, AWS_SESSION
+
+import os
 
 app_connect_ui = ui.page_fluid(
-    ui.h2("Welcome to the Data Request Bot!"),
+    ui.panel_title("Data Request Bot"),
+    ui.h4("Database Connection"),
     ui.br(),
     ui.p(
         """
-        The Data Request Bot is a chatbot for answering questions about your data without having to interact with a database
-        or code in SQL at all. Using your uploaded database documentation, the chatbot can translate your natural language
-        questions into executable SQL queries on your database, and use the results to come up with an answer.
+        Here is where you set the connection to your database. Currently only connections to
+        AWS Glue Data Catalogs are support. Please DO NOT use AWS access keys and secret keys
+        associated with AWS user profiles. Only use temporary credentials generated through
+        the assumption of an AWS role that has permission to access the associated AWS Glue
+        database.
         """
     ),
     ui.br(),
     ui.p(
         """
-        To get started, please upload your database documentation (must be a Markdown .md file).
-        If you don't have a database but would like a demo, download the sample DVD rentals database
-        documentation at 
-        """, 
-        ui.a("this", href="https://github.com/jshea1820/data_request_bot/blob/main/example_data/DVD%20Rentals%20Database.md", target="_blank"),
-        """ link. Then upload the file here."""
+        If you'd like to proceed to chatting using the demo data, click here
+        """
     ),
-    ui.input_file(
-        "db_doc_file_input", 
-        "File upload",
-        accept=".md"
+    ui.tags.a(
+        ui.input_action_button("demo_data_button", "Use Demo Data"),
+        href=f"/db_loading?database_name=demo"
     ),
-    ui.output_ui("submit_button_1_ui"),
     ui.br(),
-    ui.output_ui("db_archive_file_input_ui"),
-    ui.output_ui("submit_button_2_ui"),
-    ui.br()
+    ui.br(),
+    ui.input_text("database_name", "Name your database (does not have to the same as the AWS Glue database)"),
+    ui.input_text("aws_access_key", "AWS Access Key"),
+    ui.input_text("aws_access_secret_key", "AWS Access Secret Key"),
+    ui.input_text("aws_session_token", "AWS Session Token"),
+    ui.input_text("aws_region", "AWS Region (should be the region containing the Glue database)"),
+    ui.input_text("glue_database_name", "AWS Glue Database Name"),
+    ui.output_ui("submit_button_ui"),
 )
 
 def app_connect_server(input, output, session):
 
-    # Reactive to hold the state of the current page
-    current_page = reactive.Value("db_doc_upload_page")
-
+    # Demo data
     @reactive.Effect
-    def on_load():
-        print("Loading connect page...")
+    def go_to_demo():
+        if input.demo_data_button():
 
-    # Reactive calculation to check if the DB doc has been uploaded
-    @reactive.Calc
-    def uploaded_db_doc_file():
-        return input.db_doc_file_input()
+            database_name = "demo"
 
-    # Rendering for the first Submit button. Must have an uploaded file to render
+            session_credentials = AWS_SESSION.get_credentials()
+
+            parameters = {
+                "aws_access_key": session_credentials.access_key,
+                "aws_access_secret_key": session_credentials.secret_key,
+                "aws_session_token": session_credentials.token,
+                "aws_region": os.environ["AWS_REGION"],
+                "glue_database_name": os.environ["DEMO_AWS_GLUE_DATABASE"]
+            }
+
+            save_parameters(database_name, parameters)
+
     @render.ui
-    def submit_button_1_ui():
-        if not uploaded_db_doc_file():
-            return None
-        else:
-            return ui.input_action_button("submit_button_1", "Submit")
+    def submit_button_ui():
 
-    # Button click for first submission. Updates the page
-    @reactive.Effect
-    def submit_db_doc_file():
-        if input.submit_button_1():
-            files = uploaded_db_doc_file()
-            current_page.set("db_archive_upload_page")
+        database_name = input.database_name()
+        aws_access_key = input.aws_access_key()
+        aws_access_secret_key = input.aws_access_secret_key()
+        aws_session_token = input.aws_session_token()
+        aws_region = input.aws_region()
+        glue_database_name = input.glue_database_name()
 
-    # Rendering for the DB archive upload. Must be on the second page to render
-    @render.ui
-    def db_archive_file_input_ui():
-        if current_page() == "db_doc_upload_page":
-            return None
-        else:
-            return ui.div(
-                ui.br(),
-                ui.p(
-                    """
-                    Great! Next, we'll need your database. We do not yet support online database
-                    connections, so we'll need the database as a Postgres archive (packaged in a
-                    .zip file). If you're just here for the demo, you can download the DVD rentals
-                    database archive 
-                    """,
-                    ui.a("here", href="https://github.com/jshea1820/data_request_bot/blob/main/example_data/dvdrental.zip", target="_blank"),
-                    """, and then upload the .zip file to this page"""
-                ),
-                ui.input_file(
-                    "db_archive_file_input",
-                    "Upload file",
-                    accept=".zip"
-                )
+        if database_name and aws_access_key and aws_access_secret_key and aws_session_token and glue_database_name and aws_region:
+
+            return ui.tags.a(
+                ui.input_action_button("submit_button", "Start Chatting"),
+                href=f"/db_loading?database_name={database_name}"
             )
-    
-    # Reactive calculation to check if the archive has been uploaded
-    @reactive.Calc
-    def uploaded_db_archive_file():
-        # Get the uploaded file(s) information
-        return input.db_archive_file_input()
-
-    # Rendering for the second submit button. We must have an uploaded archive file to render
-    @render.ui
-    def submit_button_2_ui():
-        if not uploaded_db_archive_file():
+        else:
             return None
 
-        return ui.div(
-            ui.p(
-                """
-                You're ready to start chatting! Click the button to proceed to the chat.
-                It will take a few moments as we'll need to unpack your data and prepare
-                the chatbot. Keep in mind this is still in beta and there may be bugs.
-                """
-            ),
-            ui.tags.a(
-                ui.input_action_button("submit_button_2", "Start Chatting"),
-                href="/chat"
-            )
-        )
-
-    # Button click for second submission. Runs the preparation
+    # Button click for submission
     @reactive.Effect
-    def navigate_to_text_page():
-        if input.submit_button_2():  # Button clicked
+    def submit():
+        if input.submit_button():
 
-            files = uploaded_db_archive_file()
+            database_name = input.database_name()
 
+            parameters = {
+                "aws_access_key": input.aws_access_key(),
+                "aws_access_secret_key": input.aws_access_secret_key(),
+                "aws_session_token": input.aws_session_token(),
+                "aws_region": input.aws_region(),
+                "glue_database_name": input.glue_database_name()
+            }
+
+            save_parameters(database_name, parameters)

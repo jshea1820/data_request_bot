@@ -1,4 +1,4 @@
-from langchain_community.document_loaders import UnstructuredMarkdownLoader
+from langchain_community.document_loaders import JSONLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_core.vectorstores import InMemoryVectorStore
@@ -13,17 +13,14 @@ class DocumentVectorStoreGenerator:
     
     def load_documents(self, document_path):
 
-        loader = UnstructuredMarkdownLoader(document_path)
+        loader = JSONLoader(
+            file_path=document_path,
+            jq_schema=".",
+            text_content=False
+        )
         self.docs = loader.load()
 
     def create_vector_store(self):
 
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=500,
-            chunk_overlap=100,
-            add_start_index=True,
-        )
-
-        splits = text_splitter.split_documents(self.docs)
-        self.vector_store.add_documents(documents=splits)
+        self.vector_store.add_documents(documents=self.docs)
 

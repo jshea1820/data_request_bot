@@ -24,13 +24,7 @@ RUN apt install -y libffi-dev
 RUN apt install -y liblzma-dev
 RUN apt install -y git
 
-RUN apt update
-RUN apt install -y postgresql
-RUN apt install -y postgresql-contrib
-RUN apt install -y sudo
-
 RUN rm -rf /var/lib/apt/lists/*
-
 
 # Install and configure pyenv
 RUN curl https://pyenv.run | bash
@@ -56,9 +50,11 @@ COPY Pipfile.lock /workdir
 RUN pipenv install
 
 # Move the app over
-RUN mkdir /app
-COPY app/* /workdir/app/
+COPY web_server/ /workdir/web_server/
+COPY graph_api/ /workdir/graph_api/
 
+COPY run_app.sh /workdir
 
-CMD ["pipenv", "run", "shiny", "run", "./app/app.py", "--host", "0.0.0.0", "--port", "8000"]
+RUN chmod +x ./run_app.sh
 
+CMD ["./run_app.sh"]
