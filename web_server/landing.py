@@ -1,6 +1,5 @@
 from shiny import ui, reactive
-from utils import AWS_SESSION, save_parameters
-
+from aws_client import AWSClient
 import os
 
 app_landing_ui = ui.page_fluid(
@@ -31,21 +30,10 @@ app_landing_ui = ui.page_fluid(
 
 def app_landing_server(input, output, session):
 
+    aws_client = AWSClient()
+
     # Button click for submission
     @reactive.Effect
     def go_to_demo():
         if input.chat_button():
-
-            database_name = "demo"
-
-            session_credentials = AWS_SESSION.get_credentials()
-
-            parameters = {
-                "aws_access_key": session_credentials.access_key,
-                "aws_access_secret_key": session_credentials.secret_key,
-                "aws_session_token": session_credentials.token,
-                "aws_region": os.environ["AWS_REGION"],
-                "glue_database_name": os.environ["DEMO_AWS_GLUE_DATABASE"]
-            }
-
-            save_parameters(database_name, parameters)
+            aws_client.save_database_info(demo=True)

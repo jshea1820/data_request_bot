@@ -11,14 +11,18 @@ class DocumentVectorStoreGenerator:
         embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
         self.vector_store = InMemoryVectorStore(embeddings)
     
-    def load_documents(self, document_path):
+    def load_documents(self, schema_document_path, db_doc_dir):
 
         loader = JSONLoader(
-            file_path=document_path,
+            file_path=schema_document_path,
             jq_schema=".",
             text_content=False
         )
         self.docs = loader.load()
+
+        print("Loading database doc files from {}".format(db_doc_dir))
+
+        # TODO add in db_doc_dir to vector store (or maybe make multiple vector stores?)
 
     def create_vector_store(self):
 

@@ -5,7 +5,7 @@ from graph_api.langgraph.doc_vector_store_generator import DocumentVectorStoreGe
 
 class Graph:
 
-    def __init__(self, document_path, db_client):
+    def __init__(self, schema_document_path, db_doc_dir, db_client):
 
         print("Initializing graph....")
 
@@ -15,7 +15,7 @@ class Graph:
 
         print("Creating vector store...")
         dvsg = DocumentVectorStoreGenerator()
-        dvsg.load_documents(document_path)
+        dvsg.load_documents(schema_document_path, db_doc_dir)
         dvsg.create_vector_store()
         print("Vector store created")
 
